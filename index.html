@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f0f19">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HabitHub">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>HabitHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   DESIGN SYSTEM — DARK PREMIUM
+══════════════════════════════════════════ */
+:root {
+  --bg:        #0f0f19;
+  --bg2:       #16162a;
+  --bg3:       #1e1e35;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #f0f0f8;
+  --text2:     #9494b8;
+  --text3:     #5a5a7a;
+
+  --accent:    #6366f1;   /* indigo */
+  --accent2:   #a78bfa;   /* violet */
+  --green:     #34d399;
+  --amber:     #fbbf24;
+  --rose:      #fb7185;
+  --sky:       #38bdf8;
+
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Plus Jakarta Sans', sans-serif;
+
+  --nav-h: 72px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-accent: 0 8px 24px rgba(99,102,241,0.35);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%; overflow: hidden;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ══ SCREENS ══ */
+#app { height: 100%; position: relative; }
+.screen {
+  display: none; flex-direction: column;
+  height: 100%; overflow: hidden;
+}
+.screen.active { display: flex; }
+.screen-body {
+  flex: 1; overflow-y: auto; padding: 16px 16px calc(var(--nav-h) + 16px);
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+/* ══ ONBOARDING ══ */
+#onboarding {
+  height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 32px 24px;
+  background: var(--bg);
+  position: relative; overflow: hidden;
+}
+#onboarding::before {
+  content: '';
+  position: absolute; top: -20%; left: -20%;
+  width: 140%; height: 140%;
+  background: radial-gradient(ellipse at 30% 40%, rgba(99,102,241,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 70%, rgba(167,139,250,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+.ob-logo { font-size: 3rem; margin-bottom: 12px; animation: floatIn 0.7s cubic-bezier(0.34,1.56,0.64,1); }
+.ob-title {
+  font-family: var(--font-display); font-size: 2.6rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--text) 0%, var(--accent2) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 6px; animation: floatIn 0.7s 0.1s both cubic-bezier(0.34,1.56,0.64,1);
+}
+.ob-sub {
+  color: var(--text2); font-size: 0.95rem; font-weight: 500;
+  margin-bottom: 32px; text-align: center; line-height: 1.5;
+  animation: floatIn 0.7s 0.15s both ease;
+}
+.ob-input-row { display: flex; gap: 8px; width: 100%; margin-bottom: 8px; }
+.ob-emoji-btn {
+  width: 52px; height: 52px; border-radius: var(--r-sm); border: 1.5px solid var(--border2);
+  background: var(--bg3); color: var(--text); font-size: 1.4rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; flex-shrink: 0;
+}
+.ob-emoji-btn:active { transform: scale(0.92); }
+.ob-text-input {
+  flex: 1; height: 52px; background: var(--bg3); border: 1.5px solid var(--border2);
+  border-radius: var(--r-sm); padding: 0 16px; font-family: var(--font-body);
+  font-size: 0.95rem; font-weight: 600; color: var(--text); outline: none;
+  transition: border-color 0.2s;
+}
+.ob-text-input:focus { border-color: var(--accent); }
+.ob-text-input::placeholder { color: var(--text3); }
+.ob-add-btn {
+  width: 52px; height: 52px; border-radius: var(--r-sm); border: none;
+  background: var(--accent); color: white; font-size: 1.4rem;
+  cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+}
+.ob-add-btn:active { transform: scale(0.92); background: var(--accent2); }
+.ob-habits-list { width: 100%; min-height: 60px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.ob-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--bg3); border: 1.5px solid var(--border2);
+  color: var(--text); padding: 8px 14px; border-radius: 50px;
+  font-size: 0.85rem; font-weight: 600;
+  animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.ob-chip-del { color: var(--text3); cursor: pointer; font-size: 0.75rem; }
+.ob-start-btn {
+  width: 100%; height: 56px; border-radius: var(--r-lg); border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white; font-family: var(--font-display); font-size: 1.1rem; font-weight: 700;
+  cursor: pointer; box-shadow: var(--shadow-accent); transition: all 0.15s;
+  letter-spacing: 0.03em;
+}
+.ob-start-btn:active { transform: scale(0.97); }
+
+/* ══ HEADER ══ */
+.header {
+  padding: 20px 20px 0; flex-shrink: 0;
+  position: relative;
+}
+.header-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, var(--bg), transparent);
+  pointer-events: none;
+}
+.header-title {
+  font-family: var(--font-display); font-size: 1.6rem; font-weight: 800;
+  color: var(--text); margin-bottom: 2px; position: relative;
+}
+.header-sub { color: var(--text2); font-size: 0.82rem; font-weight: 500; position: relative; }
+
+/* Date navigation */
+.date-nav {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 14px; margin-bottom: 4px;
+}
+.date-nav-btn {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--bg3); border: 1.5px solid var(--border);
+  color: var(--text2); font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.date-nav-btn:active { background: var(--border2); transform: scale(0.92); }
+.date-nav-btn.disabled { opacity: 0.3; pointer-events: none; }
+.date-label {
+  flex: 1; text-align: center;
+  font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text);
+}
+.today-badge {
+  font-size: 0.7rem; font-weight: 700; background: var(--accent);
+  color: white; padding: 2px 8px; border-radius: 50px; margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ══ CARDS ══ */
+.card {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: var(--r-lg); padding: 18px;
+  animation: fadeUp 0.25s ease both;
+}
+.card-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 12px;
+}
+
+/* ══ PRIORITIES ══ */
+.priorities-ta {
+  width: 100%; min-height: 80px; background: transparent;
+  border: none; outline: none; resize: none;
+  font-family: var(--font-body); font-size: 0.95rem; font-weight: 500;
+  color: var(--text); line-height: 1.7; padding: 0;
+}
+.priorities-ta::placeholder { color: var(--text3); }
+
+/* ══ PROGRESS ══ */
+.prog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.prog-count { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; color: var(--text); }
+.prog-status { font-size: 0.82rem; font-weight: 600; color: var(--text2); }
+.prog-track {
+  width: 100%; height: 6px; background: var(--bg3); border-radius: 50px; overflow: hidden;
+}
+.prog-fill {
+  height: 100%; border-radius: 50px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ══ HABIT ITEMS ══ */
+.habit-item {
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.habit-item:last-child { border-bottom: none; padding-bottom: 0; }
+.habit-item:first-child { padding-top: 0; }
+.habit-row { display: flex; align-items: center; gap: 14px; }
+
+/* THE CREATIVE CHECK — Liquid orb */
+.hcheck {
+  position: relative;
+  width: 44px; height: 44px; flex-shrink: 0;
+  cursor: pointer;
+}
+.hcheck-inner {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--border2);
+  background: var(--bg3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  transition: border-color 0.3s;
+  overflow: hidden;
+}
+.hcheck-ring {
+  position: absolute; inset: -4px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+}
+.hcheck.done .hcheck-inner {
+  border-color: transparent;
+  animation: liquidFill 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+.hcheck.done .hcheck-ring {
+  animation: ringPulse 0.6s ease forwards;
+}
+/* Particles */
+.hcheck .particle {
+  position: absolute;
+  width: 5px; height: 5px; border-radius: 50%;
+  pointer-events: none;
+}
+
+.habit-name { flex: 1; font-size: 0.95rem; font-weight: 600; color: var(--text); transition: all 0.3s; }
+.habit-name.done { color: var(--text3); text-decoration: line-through; }
+.habit-note-btn {
+  padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--bg3); color: var(--text3); font-family: var(--font-body);
+  font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
+  white-space: nowrap;
+}
+.habit-note-btn.has-note { color: var(--accent2); border-color: rgba(167,139,250,0.3); }
+.habit-note-btn:active { transform: scale(0.95); }
+.habit-note-wrap {
+  margin-top: 10px; display: none;
+  padding: 10px 0 0 58px;
+}
+.habit-note-wrap.open { display: block; animation: fadeDown 0.2s ease; }
+.habit-note-ta {
+  width: 100%; min-height: 56px; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 10px 12px;
+  font-family: var(--font-body); font-size: 0.85rem; font-weight: 500; color: var(--text);
+  outline: none; resize: none; transition: border-color 0.2s;
+}
+.habit-note-ta:focus { border-color: var(--accent); }
+.habit-note-ta::placeholder { color: var(--text3); }
+
+/* Streak pill */
+.streak-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.25);
+  color: var(--amber); padding: 3px 10px; border-radius: 50px;
+  font-size: 0.72rem; font-weight: 700; flex-shrink: 0;
+}
+
+/* ══ BOTTOM NAV ══ */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px; height: var(--nav-h);
+  background: rgba(15,15,25,0.95); backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex; z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  background: none; border: none; cursor: pointer;
+  transition: all 0.15s; padding: 8px 4px;
+  position: relative;
+}
+.nav-icon { font-size: 1.3rem; transition: transform 0.2s; line-height: 1; }
+.nav-label { font-family: var(--font-body); font-size: 0.6rem; font-weight: 700; color: var(--text3); letter-spacing: 0.04em; transition: color 0.2s; }
+.nav-btn.active .nav-label { color: var(--accent2); }
+.nav-btn.active .nav-icon { transform: translateY(-2px); }
+.nav-btn.active::after {
+  content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 24px; height: 2px; background: var(--accent2); border-radius: 2px 2px 0 0;
+}
+.nav-btn:active { opacity: 0.7; }
+
+/* ══ HISTORY ══ */
+.hist-card {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: var(--r-lg); padding: 16px; animation: fadeUp 0.2s ease both;
+}
+.hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.hist-date { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text); }
+.hist-pct {
+  font-family: var(--font-display); font-size: 0.82rem; font-weight: 800;
+  padding: 4px 12px; border-radius: 50px;
+}
+.hist-pct.gold { background: rgba(251,191,36,0.15); color: var(--amber); }
+.hist-pct.good { background: rgba(52,211,153,0.12); color: var(--green); }
+.hist-pct.meh  { background: rgba(148,148,184,0.1); color: var(--text2); }
+.hist-priorities { font-size: 0.82rem; color: var(--text2); font-style: italic; margin-bottom: 8px; line-height: 1.4; }
+.hist-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.hist-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 6px;
+  font-size: 0.75rem; font-weight: 600;
+}
+.hist-chip.done { background: rgba(52,211,153,0.1); color: var(--green); }
+.hist-chip.miss { background: rgba(148,148,184,0.08); color: var(--text3); }
+
+/* ══ STATS ══ */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat-box {
+  background: var(--bg2); border: 1.5px solid var(--border); border-radius: var(--r-md);
+  padding: 16px; text-align: center;
+}
+.stat-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; }
+.stat-lbl { font-size: 0.72rem; font-weight: 600; color: var(--text3); margin-top: 3px; letter-spacing: 0.04em; text-transform: uppercase; }
+.chart-wrap { position: relative; }
+
+/* ══ EXPENSES ══ */
+/* Category grid */
+.cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.cat-tile {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px; padding: 12px 6px; border-radius: var(--r-md);
+  border: 1.5px solid var(--border); background: var(--bg3);
+  cursor: pointer; transition: all 0.18s; min-height: 72px;
+}
+.cat-tile.active { border-color: var(--accent); background: rgba(99,102,241,0.12); }
+.cat-tile:active { transform: scale(0.96); }
+.cat-tile-icon { font-size: 1.5rem; line-height: 1; }
+.cat-tile-name { font-size: 0.68rem; font-weight: 700; color: var(--text2); text-align: center; line-height: 1.2; }
+.cat-tile.active .cat-tile-name { color: var(--accent2); }
+
+/* Expense form */
+.exp-form { display: flex; flex-direction: column; gap: 10px; }
+.field-label { font-size: 0.72rem; font-weight: 700; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+.field-input {
+  width: 100%; height: 48px; background: var(--bg3); border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); padding: 0 14px; font-family: var(--font-body);
+  font-size: 0.95rem; font-weight: 600; color: var(--text); outline: none; transition: border-color 0.2s;
+}
+.field-input:focus { border-color: var(--accent); }
+.field-input::placeholder { color: var(--text3); }
+.field-input[type=date]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.4); }
+.row2 { display: flex; gap: 10px; }
+.row2 .field-input { flex: 1; }
+.btn-primary {
+  height: 52px; border-radius: var(--r-md); border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white; font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.03em; transition: all 0.15s;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+}
+.btn-primary:active { transform: scale(0.97); }
+
+/* Budget bar */
+.budget-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.budget-spent { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; color: var(--text); }
+.budget-limit { font-size: 0.82rem; font-weight: 600; color: var(--text3); }
+.budget-track { width: 100%; height: 8px; background: var(--bg3); border-radius: 50px; overflow: hidden; margin-bottom: 6px; }
+.budget-fill {
+  height: 100%; border-radius: 50px;
+  background: linear-gradient(90deg, var(--accent), var(--green));
+  transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+.budget-fill.warn { background: linear-gradient(90deg, var(--amber), #f97316); }
+.budget-fill.over { background: linear-gradient(90deg, var(--rose), #e11d48); animation: pulseRed 1.5s infinite; }
+.budget-meta { font-size: 0.78rem; font-weight: 600; color: var(--text3); }
+
+/* Expense list */
+.exp-day-sep {
+  font-size: 0.72rem; font-weight: 700; color: var(--text3); letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 12px 0 6px; border-top: 1px solid var(--border);
+  margin-top: 4px; display: flex; justify-content: space-between;
+}
+.exp-day-sep:first-child { border-top: none; padding-top: 0; }
+.exp-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.exp-item:last-child { border-bottom: none; }
+.exp-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: var(--bg3); display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0; border: 1px solid var(--border);
+}
+.exp-info { flex: 1; min-width: 0; }
+.exp-name { font-size: 0.9rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exp-cat-lbl { font-size: 0.75rem; font-weight: 500; color: var(--text3); margin-top: 1px; }
+.exp-amount { font-family: var(--font-display); font-size: 1rem; font-weight: 800; color: var(--text); flex-shrink: 0; }
+.exp-del { background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--text3); padding: 6px; transition: color 0.2s; }
+.exp-del:active { color: var(--rose); }
+
+/* Pie */
+.pie-row { display: flex; align-items: center; gap: 16px; }
+.pie-legend-list { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.pie-leg { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; font-weight: 600; }
+.pie-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.pie-leg-name { flex: 1; color: var(--text2); }
+.pie-leg-val { color: var(--text); font-weight: 700; }
+
+/* Filter pills */
+.filter-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+.filter-pills::-webkit-scrollbar { display: none; }
+.filter-pill {
+  flex-shrink: 0; padding: 6px 14px; border-radius: 50px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text2); font-size: 0.78rem; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+}
+.filter-pill.active { background: var(--accent); border-color: var(--accent); color: white; }
+.filter-pill:active { transform: scale(0.96); }
+
+/* ══ RECIPES ══ */
+.search-field {
+  width: 100%; height: 48px; background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: var(--r-md); padding: 0 16px 0 42px; font-family: var(--font-body);
+  font-size: 0.9rem; font-weight: 600; color: var(--text); outline: none;
+  transition: border-color 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235a5a7a' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: 14px center;
+}
+.search-field:focus { border-color: var(--accent); }
+.search-field::placeholder { color: var(--text3); }
+.recipe-card {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: var(--r-lg); padding: 16px; cursor: pointer;
+  transition: border-color 0.2s; animation: fadeUp 0.2s ease both;
+}
+.recipe-card:active { border-color: var(--border2); }
+.recipe-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.recipe-emoji-wrap {
+  width: 52px; height: 52px; border-radius: 14px; background: var(--bg3);
+  border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; flex-shrink: 0;
+}
+.recipe-info { flex: 1; min-width: 0; }
+.recipe-name { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+.recipe-cat-lbl { font-size: 0.75rem; font-weight: 600; color: var(--text3); margin-top: 3px; }
+.recipe-fav-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; transition: transform 0.2s; padding: 4px; }
+.recipe-fav-btn:active { transform: scale(0.8); }
+.recipe-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.time-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.2);
+  color: var(--accent2); padding: 4px 12px; border-radius: 8px;
+  font-size: 0.8rem; font-weight: 700;
+}
+.macro-row { display: flex; gap: 5px; flex-wrap: wrap; }
+.macro-badge {
+  padding: 3px 9px; border-radius: 6px; font-size: 0.72rem; font-weight: 700;
+}
+.macro-badge.p { background: rgba(56,189,248,0.1); color: var(--sky); }
+.macro-badge.c { background: rgba(251,191,36,0.1); color: var(--amber); }
+.macro-badge.f { background: rgba(251,113,133,0.1); color: var(--rose); }
+.macro-badge.k { background: rgba(52,211,153,0.1); color: var(--green); }
+.recipe-desc { font-size: 0.83rem; color: var(--text2); line-height: 1.5; font-weight: 500; margin-bottom: 10px; }
+.toggle-recipe-btn {
+  width: 100%; padding: 10px; border-radius: var(--r-sm); border: 1px solid var(--border);
+  background: var(--bg3); color: var(--text2); font-family: var(--font-body);
+  font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+}
+.toggle-recipe-btn:active { background: var(--border2); }
+.recipe-detail { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.recipe-detail.open { display: block; animation: fadeDown 0.25s ease; }
+.recipe-detail h4 { font-size: 0.78rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; margin-top: 12px; }
+.recipe-detail h4:first-child { margin-top: 0; }
+.recipe-detail ul, .recipe-detail ol { padding-left: 16px; }
+.recipe-detail li { font-size: 0.85rem; color: var(--text2); font-weight: 500; margin-bottom: 5px; line-height: 1.5; }
+
+/* ══ SETTINGS ══ */
+.settings-group { display: flex; flex-direction: column; gap: 0; }
+.settings-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-row-label { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.settings-row-sub { font-size: 0.78rem; font-weight: 500; color: var(--text3); margin-top: 2px; }
+/* Toggle switch */
+.sw { position: relative; width: 48px; height: 26px; flex-shrink: 0; }
+.sw input { opacity: 0; width: 0; height: 0; }
+.sw-track {
+  position: absolute; inset: 0; border-radius: 26px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  transition: all 0.3s; cursor: pointer;
+}
+.sw-track::before {
+  content: ''; position: absolute; width: 18px; height: 18px;
+  left: 4px; top: 3px; border-radius: 50%; background: var(--text3); transition: all 0.3s;
+}
+.sw input:checked + .sw-track { background: var(--accent); border-color: var(--accent); }
+.sw input:checked + .sw-track::before { transform: translateX(22px); background: white; }
+
+.habit-manage-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.habit-manage-item:last-child { border-bottom: none; }
+.habit-manage-emoji { font-size: 1.3rem; }
+.habit-manage-name { flex: 1; font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.del-btn {
+  padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(251,113,133,0.3);
+  background: rgba(251,113,133,0.08); color: var(--rose);
+  font-family: var(--font-body); font-size: 0.75rem; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+}
+.del-btn:active { background: rgba(251,113,133,0.2); }
+.btn-danger {
+  height: 48px; width: 100%; border-radius: var(--r-md); border: 1px solid rgba(251,113,133,0.3);
+  background: rgba(251,113,133,0.08); color: var(--rose);
+  font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; transition: all 0.15s; margin-top: 8px;
+}
+.btn-danger:active { background: rgba(251,113,133,0.2); }
+.btn-export {
+  height: 48px; width: 100%; border-radius: var(--r-md); border: 1px solid var(--border2);
+  background: var(--bg3); color: var(--text);
+  font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; transition: all 0.15s; margin-top: 8px;
+}
+.btn-export:active { background: var(--border2); }
+
+/* ══ TOAST ══ */
+.toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-90px);
+  background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text); padding: 12px 22px; border-radius: 50px;
+  font-family: var(--font-body); font-size: 0.88rem; font-weight: 700;
+  z-index: 9999; transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap; backdrop-filter: blur(20px); box-shadow: var(--shadow);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ══ PARTICLES (habit check) ══ */
+.particle-wrap { position: absolute; inset: -20px; pointer-events: none; z-index: 10; }
+.pt {
+  position: absolute; width: 6px; height: 6px; border-radius: 50%;
+  top: 50%; left: 50%; opacity: 0;
+}
+
+/* ══ EMPTY STATE ══ */
+.empty { text-align: center; padding: 40px 20px; }
+.empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.5; }
+.empty-text { font-size: 0.9rem; color: var(--text3); font-weight: 600; }
+
+/* ══ ANIMATIONS ══ */
+@keyframes floatIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes fadeUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes fadeDown {
+  from { transform: translateY(-8px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes popIn {
+  from { transform: scale(0.5); opacity: 0; }
+  60%  { transform: scale(1.15); }
+  to   { transform: scale(1); opacity: 1; }
+}
+@keyframes liquidFill {
+  0%   { transform: scale(1);    background: var(--bg3); }
+  40%  { transform: scale(1.35); }
+  70%  { transform: scale(0.9);  }
+  100% { transform: scale(1.08); }
+}
+@keyframes ringPulse {
+  0%   { box-shadow: 0 0 0 0 var(--accent); opacity: 1; }
+  100% { box-shadow: 0 0 0 14px transparent; opacity: 0; }
+}
+@keyframes ptFly {
+  0%   { opacity: 1; transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translate(calc(var(--dx)*3.5), calc(var(--dy)*3.5)) scale(0); }
+}
+@keyframes pulseRed {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.6; }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25%      { transform: translateX(-4px); }
+  75%      { transform: translateX(4px); }
+}
+@keyframes countUp { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+</style>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="ob-logo">⬡</div>
+  <div class="ob-title">HabitHub</div>
+  <p class="ob-sub">Twój hub produktywności.<br>Jakie nawyki chcesz budować?</p>
+  <div class="ob-input-row">
+    <button class="ob-emoji-btn" id="ob-emoji-btn" onclick="cycleEmojiOb()">🎯</button>
+    <input class="ob-text-input" id="ob-habit-inp" placeholder="Np. Siłownia, Czytanie…" maxlength="30" onkeydown="if(event.key==='Enter')addObHabit()">
+    <button class="ob-add-btn" onclick="addObHabit()">+</button>
+  </div>
+  <div class="ob-habits-list" id="ob-list"></div>
+  <button class="ob-start-btn" onclick="finishOnboarding()">Zaczynamy →</button>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none;">
+
+  <!-- TODAY -->
+  <div class="screen active" id="screen-today">
+    <div class="header">
+      <div class="header-title" id="today-title">Dzisiaj</div>
+      <div class="date-nav">
+        <button class="date-nav-btn" id="btn-prev" onclick="changeDay(-1)">←</button>
+        <span class="date-label" id="today-date-lbl">—</span>
+        <button class="date-nav-btn" id="btn-next" onclick="changeDay(1)">→</button>
+      </div>
+    </div>
+    <div class="screen-body">
+      <div class="card">
+        <div class="card-label">📋 Priorytety dnia</div>
+        <textarea class="priorities-ta" id="priorities-ta" placeholder="Co jest dziś najważniejsze?&#10;Napisz swoje priorytety…" rows="3"></textarea>
+      </div>
+      <div class="card">
+        <div class="prog-header">
+          <span class="prog-count" id="prog-count">0/0</span>
+          <span class="prog-status" id="prog-status">Czas zacząć 💪</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="card" id="habits-card"></div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="screen" id="screen-history">
+    <div class="header">
+      <div class="header-title">Historia</div>
+      <div class="header-sub">Ostatnie 30 dni</div>
+    </div>
+    <div class="screen-body" id="history-body"></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="screen" id="screen-stats">
+    <div class="header"><div class="header-title">Statystyki</div></div>
+    <div class="screen-body">
+      <div class="stat-grid" id="stat-grid"></div>
+      <div class="card">
+        <div class="card-label">Ostatnie 7 dni</div>
+        <canvas id="chart7" height="110"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-label">Ostatnie 30 dni</div>
+        <canvas id="chart30" height="70"></canvas>
+      </div>
+      <div class="card" id="habit-detail-stats">
+        <div class="card-label">Nawyki – szczegóły</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPENSES -->
+  <div class="screen" id="screen-expenses">
+    <div class="header"><div class="header-title">Wydatki</div></div>
+    <div class="screen-body">
+      <!-- Budget -->
+      <div class="card" id="budget-summary">
+        <div class="card-label">Budżet miesięczny</div>
+        <div class="budget-row">
+          <span class="budget-spent" id="budget-spent-lbl">0,00 zł</span>
+          <span class="budget-limit" id="budget-limit-lbl"></span>
+        </div>
+        <div class="budget-track"><div class="budget-fill" id="budget-bar" style="width:0%"></div></div>
+        <div class="budget-meta" id="budget-meta-lbl"></div>
+      </div>
+      <!-- Pie -->
+      <div class="card">
+        <div class="card-label">Podział tego miesiąca</div>
+        <div class="pie-row">
+          <canvas id="pie-chart" width="120" height="120" style="flex-shrink:0;"></canvas>
+          <div class="pie-legend-list" id="pie-legend"></div>
+        </div>
+      </div>
+      <!-- Add expense -->
+      <div class="card">
+        <div class="card-label">Dodaj wydatek</div>
+        <div class="exp-form">
+          <div>
+            <div class="field-label">Kategoria</div>
+            <div class="cat-grid" id="cat-grid"></div>
+          </div>
+          <div class="row2">
+            <div style="flex:1">
+              <div class="field-label">Kwota (PLN)</div>
+              <input class="field-input" type="number" id="exp-amount" placeholder="0,00" min="0" step="0.01">
+            </div>
+            <div style="flex:1">
+              <div class="field-label">Data</div>
+              <input class="field-input" type="date" id="exp-date">
+            </div>
+          </div>
+          <div>
+            <div class="field-label">Opis</div>
+            <input class="field-input" type="text" id="exp-name" placeholder="Np. Obiad z przyjacielem">
+          </div>
+          <button class="btn-primary" onclick="addExpense()">Dodaj wydatek</button>
+        </div>
+      </div>
+      <!-- Filter + list -->
+      <div class="filter-pills" id="exp-filter-pills"></div>
+      <div class="card" id="exp-list-card">
+        <div class="card-label">Lista wydatków</div>
+        <div id="exp-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECIPES -->
+  <div class="screen" id="screen-recipes">
+    <div class="header"><div class="header-title">Przepisy</div></div>
+    <div class="screen-body">
+      <input class="search-field" id="recipe-search" placeholder="Szukaj przepisu…" oninput="renderRecipes()">
+      <div class="filter-pills" id="recipe-cat-pills"></div>
+      <div class="filter-pills" id="recipe-sort-pills"></div>
+      <div id="recipe-list"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="screen" id="screen-settings">
+    <div class="header"><div class="header-title">Ustawienia</div></div>
+    <div class="screen-body">
+      <div class="card">
+        <div class="card-label">Moje nawyki</div>
+        <div id="settings-habits-list"></div>
+        <div class="ob-input-row" style="margin-top:12px;">
+          <button class="ob-emoji-btn" id="set-emoji-btn" onclick="cycleEmojiSet()">🎯</button>
+          <input class="ob-text-input" id="set-habit-inp" placeholder="Nowy nawyk…" maxlength="30" onkeydown="if(event.key==='Enter')addHabitSettings()">
+          <button class="ob-add-btn" onclick="addHabitSettings()">+</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Budżet miesięczny</div>
+        <div class="field-label" style="margin-bottom:6px;">Limit w PLN</div>
+        <input class="field-input" type="number" id="budget-inp" placeholder="np. 3000" min="0">
+        <button class="btn-primary" style="margin-top:10px;height:44px;font-size:0.9rem;" onclick="saveBudget()">Zapisz budżet</button>
+      </div>
+      <div class="card">
+        <div class="settings-group">
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Dźwięki</div>
+              <div class="settings-row-sub">Animacje i efekty dźwiękowe</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="sounds-sw" checked onchange="saveSettings()"><span class="sw-track"></span></label>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <button class="btn-export" onclick="exportData()">Eksportuj dane (JSON)</button>
+        <button class="btn-danger" onclick="resetAll()">Resetuj wszystkie dane</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="showScreen('today',this)"><span class="nav-icon">⌂</span><span class="nav-label">Dziś</span></button>
+    <button class="nav-btn" onclick="showScreen('history',this)"><span class="nav-icon">◷</span><span class="nav-label">Historia</span></button>
+    <button class="nav-btn" onclick="showScreen('stats',this)"><span class="nav-icon">◈</span><span class="nav-label">Statystyki</span></button>
+    <button class="nav-btn" onclick="showScreen('expenses',this)"><span class="nav-icon">◎</span><span class="nav-label">Wydatki</span></button>
+    <button class="nav-btn" onclick="showScreen('recipes',this)"><span class="nav-icon">✦</span><span class="nav-label">Przepisy</span></button>
+    <button class="nav-btn" onclick="showScreen('settings',this)"><span class="nav-icon">◉</span><span class="nav-label">Ustaw.</span></button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════
+   DATA
+════════════════════════════════════════ */
+const HABIT_COLORS = ['#6366f1','#a78bfa','#34d399','#fbbf24','#fb7185','#38bdf8','#f472b6','#4ade80'];
+const EMOJIS = ['🎯','💪','📚','🏃','🧘','🥗','💧','😴','✍️','🎨','🎵','🧠','💊','🚴','🌿','⚡','🔥','🌟','🏆','💡'];
+let obEmojiIdx = 0, setEmojiIdx = 0;
+
+const CATEGORIES = [
+  { id:'food_out',  name:'Na mieście',  emoji:'🍔' },
+  { id:'grocery',   name:'Zakupy',      emoji:'🛒' },
+  { id:'transport', name:'Transport',   emoji:'🚇' },
+  { id:'fun',       name:'Rozrywka',    emoji:'🎮' },
+  { id:'health',    name:'Zdrowie',     emoji:'💊' },
+  { id:'subs',      name:'Subskrypcje', emoji:'📱' },
+  { id:'other',     name:'Inne',        emoji:'📦' },
+];
+const CAT_COLORS = ['#6366f1','#a78bfa','#34d399','#fbbf24','#fb7185','#38bdf8','#f472b6'];
+
+const RECIPES = [
+  { id:1,  name:'Overnight oats z bananem',       emoji:'🌙', cat:'quick',    time:10, prot:15, carb:60, fat:8,  kcal:370, desc:'Idealne śniadanie bez gotowania. Płatki namoczone przez noc – rano gotowe.',       ingredients:['100g płatków owsianych','200ml mleka lub napoju roślinnego','1 banan','1 łyżka masła orzechowego','1 łyżka miodu','1 łyżeczka wanilii'], steps:['Wymieszaj płatki z mlekiem w słoiku.','Dodaj pokrojony banan i masło orzechowe.','Polej miodem, dodaj wanilię.','Przykryj i wstaw do lodówki na min. 6h.','Rano wymieszaj i zjedz na zimno lub podgrzej.'] },
+  { id:2,  name:'Kurczak z ryżem i brokułami',    emoji:'🍗', cat:'highprot', time:25, prot:45, carb:55, fat:8,  kcal:470, desc:'Klasyk siłowniany. Proste, pełnowartościowe, sycące.',                               ingredients:['200g piersi z kurczaka','150g ryżu białego','200g brokułu','1 łyżka oliwy','sól, pieprz, czosnek granulowany'], steps:['Ugotuj ryż wg instrukcji (~15 min).','Różyczki brokułu gotuj na parze 8 min.','Kurczaka pokrój w kostkę, dopraw i smaż na oliwie 6-8 min.','Podaj razem, opcjonalnie z sosem sojowym.'] },
+  { id:3,  name:'Omlet z warzywami',               emoji:'🍳', cat:'quick',    time:10, prot:22, carb:8,  fat:14, kcal:240, desc:'Szybki, sycący posiłek na każdą porę dnia.',                                         ingredients:['3 jajka','50ml mleka','½ papryki','garść szpinaku','¼ cebuli','sól, pieprz'], steps:['Roztrzep jajka z mlekiem, dopraw.','Podsmaż cebulę i paprykę 2 min.','Dodaj szpinak, wlej masę jajeczną.','Smaż pod przykryciem 3-4 min na małym ogniu.','Złóż na pół i podawaj.'] },
+  { id:4,  name:'Smoothie białkowe mango',         emoji:'🥤', cat:'highprot', time:5,  prot:30, carb:35, fat:5,  kcal:300, desc:'Ekspresowe – blender i gotowe. Idealne po treningu.',                                ingredients:['1 miarka odżywki waniliowej','150g mrożonego mango','200ml mleka','100g twarogu chudego','1 łyżka miodu','lód'], steps:['Wrzuć wszystko do blendera.','Blenduj 40-50 sekund.','Przelej do kubka, wypij od razu.'] },
+  { id:5,  name:'Makaron z tuńczykiem',            emoji:'🍝', cat:'quick',    time:15, prot:35, carb:65, fat:10, kcal:490, desc:'Szybki obiad z spiżarni. 15 minut i gotowe.',                                         ingredients:['150g makaronu penne','1 puszka tuńczyka w wodzie','200g passaty pomidorowej','1 ząbek czosnku','oliwa, sól, pieprz, bazylia'], steps:['Ugotuj makaron al dente.','Na patelni podsmaż czosnek na oliwie 1 min.','Dodaj passatę, gotuj 3 min, dopraw.','Wmieszaj odsączonego tuńczyka.','Połącz z makaronem, podaj z bazylią.'] },
+  { id:6,  name:'Ryż stir-fry z warzywami',       emoji:'🥢', cat:'veg',      time:20, prot:12, carb:70, fat:6,  kcal:380, desc:'Azjatyckie smaki w 20 minut. Lekkie i pełne warzyw.',                                 ingredients:['200g ryżu jaśminowego','1 marchewka','1 cukinia','1 papryka','2 jajka','2 łyżki sosu sojowego','1 łyżka oleju sezamowego'], steps:['Ugotuj ryż.','Warzywa pokrój w kostkę, smaż na mocno rozgrzanej patelni 5 min.','Zrób miejsce, wbij jajka i szybko mieszaj.','Dodaj ryż, sos sojowy, olej sezamowy.','Smaż 2 min, ciągle mieszając.'] },
+  { id:7,  name:'Pancakes proteinowe',             emoji:'🥞', cat:'highprot', time:15, prot:28, carb:40, fat:6,  kcal:320, desc:'Puszyste naleśniki z odżywką. Śniadanie mistrzów!',                                   ingredients:['1 miarka odżywki waniliowej','2 jajka','50g płatków owsianych (zmielonych)','100ml mleka','½ łyżeczki proszku do pieczenia'], steps:['Zblenduj płatki na mąkę.','Wymieszaj wszystkie składniki na gładkie ciasto.','Smaż porcje (2 łyżki) na teflonowej patelni bez tłuszczu.','Przewracaj gdy pojawią się bąbelki (~2 min).','Podaj z owocami lub miodem.'] },
+  { id:8,  name:'Sałatka kurczak–awokado',        emoji:'🥑', cat:'highprot', time:15, prot:38, carb:15, fat:22, kcal:400, desc:'Keto-friendly. Sycąca, zero węglowodanów.',                                           ingredients:['200g pieczonego kurczaka','1 awokado','100g rukoli','10 pomidorków cherry','½ ogórka','sok z cytryny, oliwa, sól'], steps:['Kurczaka pokrój w paski.','Awokado pokrój w kostkę, skrop sokiem z cytryny.','Wymieszaj wszystkie składniki.','Skrop oliwą, dopraw solą i pieprzem.','Podawaj od razu.'] },
+  { id:9,  name:'Krem z dyni z imbirem',           emoji:'🎃', cat:'veg',      time:30, prot:6,  carb:35, fat:8,  kcal:230, desc:'Rozgrzewa i syci. Idealna na chłodne dni.',                                           ingredients:['500g dyni hokkaido','1 marchewka','1 cebula','500ml bulionu warzywnego','200ml mleka kokosowego','imbir, kurkuma, sól'], steps:['Dynię i marchewkę pokrój w kostkę, cebulę w piórka.','Podsmaż cebulę 3 min, dodaj warzywa.','Zalej bulionem, gotuj 20 min do miękkości.','Zblenduj na krem, wlej mleko kokosowe.','Dopraw imbirem, kurkumą, solą. Podgrzej i podaj.'] },
+  { id:10, name:'Meal prep: Kurczak teriyaki ×5', emoji:'📦', cat:'mealprep', time:45, prot:42, carb:50, fat:9,  kcal:450, desc:'Gotuj raz, jedz 5 dni. Klasyczny meal prep!',                                         ingredients:['1kg piersi kurczaka','300g ryżu','150ml sosu teriyaki','2 łyżki miodu','2 ząbki czosnku','brokół + marchewka (500g)'], steps:['Ugotuj cały ryż (~25 min).','Kurczaka marynuj w teriyaki+miód+czosnek 10 min.','Usmaż kurczaka partiami 6-8 min.','Ugotuj warzywa na parze 8 min.','Rozłóż do 5 pojemników. Trzymaj do 4 dni w lodówce.'] },
+  { id:11, name:'Owsianka z orzechami',            emoji:'🥣', cat:'veg',      time:10, prot:12, carb:55, fat:15, kcal:390, desc:'Klasyczne śniadanie pełne energii.',                                                   ingredients:['80g płatków owsianych','300ml mleka','garść orzechów włoskich','1 łyżka nasion chia','1 łyżka syropu klonowego','cynamon'], steps:['Gotuj płatki z mlekiem 5 min, mieszając.','Zdejmij z ognia, dodaj chia, przykryj na 2 min.','Przełóż do miski, ułóż orzechy.','Polej syropem, posyp cynamonem.'] },
+  { id:12, name:'Wrap z wędzonym łososiem',       emoji:'🐟', cat:'highprot', time:10, prot:32, carb:38, fat:14, kcal:400, desc:'Szybki i elegancki. Pełno omega-3.',                                                   ingredients:['1 duży tortilla pszenny','120g wędzonego łososia','2 łyżki serka śmietankowego','garść szpinaku','½ ogórka','sok z cytryny'], steps:['Rozsmaruj serek na tortilli.','Ułóż szpinak i ogórek pokrojony w plastry.','Połóż łososia, skrop sokiem z cytryny.','Zwiń ciasno w rulon, pokrój ukośnie.'] },
+  { id:13, name:'Energy balls daktylowe',          emoji:'⚡', cat:'snack',    time:20, prot:5,  carb:30, fat:8,  kcal:210, desc:'Bez pieczenia! Kulki energii przed treningiem.',                                      ingredients:['150g daktyli bez pestek','50g orzechów nerkowca','2 łyżki kakao','2 łyżki wiórków kokosowych','1 łyżka masła orzechowego'], steps:['Zblenduj daktyle na pastę.','Dodaj pozostałe składniki (bez wiórków), blenduj.','Z masy formuj kulki wielkości orzecha.','Obtocz w wiórktach.','Wstaw do lodówki na 30 min.'] },
+  { id:14, name:'Avocado toast z jajkiem',         emoji:'🍞', cat:'quick',    time:10, prot:18, carb:28, fat:20, kcal:350, desc:'Klasyk śniadaniowy w 10 minut.',                                                       ingredients:['2 jajka','2 kromki chleba pełnoziarnistego','1 awokado','sok z cytryny','płatki chili, sól morska'], steps:['Opiecz chleb w tosterze.','Rozgnieć awokado, dopraw sokiem z cytryny i solą.','Usmaż jajka sadzone.','Posmaruj tost awokado, połóż jajka.','Posyp płatkami chili i solą morską.'] },
+  { id:15, name:'Meal prep: Quinoa z ciecierzycą', emoji:'🌾', cat:'mealprep', time:35, prot:14, carb:58, fat:9,  kcal:365, desc:'Wegański meal prep na 4 porcje. Quinoa to kompletne białko!',                         ingredients:['300g quinoa','1 puszka ciecierzycy','1 papryka czerwona','1 cukinia','200g pomidorków cherry','2 łyżki oliwy','sok z cytryny, kumin, sól'], steps:['Przepłucz i ugotuj quinoa (15 min).','Warzywa pokrój, ciecierzycę osącz.','Podsmaż warzywa na oliwie 5-7 min.','Wymieszaj quinoa z warzywami i ciecierzycą.','Dopraw kuminem, sokiem z cytryny, solą. Rozłóż do pojemników.'] },
+  { id:16, name:'Chili con carne ×4',              emoji:'🌶️', cat:'mealprep', time:50, prot:38, carb:45, fat:12, kcal:440, desc:'Rozgrzewający meal prep. Smakuje lepiej każdego dnia!',                               ingredients:['600g mielonej wołowiny','2 puszki czerwonej fasoli','1 puszka pomidorów','1 cebula','2 ząbki czosnku','chili, kumin, oregano, sól'], steps:['Obsmaż mielone na dużej patelni, odcedź tłuszcz.','Dodaj cebulę i czosnek, smaż 3 min.','Wlej pomidory, dodaj fasolę i przyprawy.','Gotuj na małym ogniu 30-35 min.','Ostudź, rozlej do 4 pojemników. Podawaj z ryżem.'] },
+  { id:17, name:'Twaróg z owocami i granolą',     emoji:'🍓', cat:'quick',    time:5,  prot:24, carb:32, fat:6,  kcal:275, desc:'Ekspresowe śniadanie lub przekąska. Idealne po treningu.',                             ingredients:['200g twarogu półtłustego','100g ulubionych owoców','30g granoli','1 łyżka miodu lub syropu klonowego'], steps:['Rozkrusić twaróg do miski.','Ułożyć owoce.','Posypać granolą.','Polać miodem.'] },
+];
+
+/* ════════════════════════════════════════
+   STATE
+════════════════════════════════════════ */
+let S = {
+  habits: [],
+  days: {},       // { "2024-01-15": { priorities: "", habits: { id: { done, note } } } }
+  expenses: [],
+  settings: { sounds: true, budget: 0 },
+  favorites: [],
+};
+let currentDateStr = todayStr();
+let selectedCatId = 'food_out';
+let expFilter = 'all';
+let recipeCatFilter = 'all';
+let recipeSort = 'default';
+
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function dateFromStr(s) { return new Date(s + 'T12:00:00'); }
+function isFuture(s) { return s > todayStr(); }
+// Allow +1 day only (for "priorities for tomorrow" habit)
+function isAllowedFuture(s) { 
+  const d = dateFromStr(s);
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  return s <= tomorrow.toISOString().split('T')[0];
+}
+function formatDateLabel(s) {
+  const today = todayStr();
+  const d = dateFromStr(s);
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  const tomorrowStr = tomorrow.toISOString().split('T')[0];
+  if (s === today) return 'Dziś';
+  if (s === tomorrowStr) return 'Jutro';
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  if (s === yesterday.toISOString().split('T')[0]) return 'Wczoraj';
+  const days = ['nd','pn','wt','śr','cz','pt','sb'];
+  const months = ['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'];
+  return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
+}
+
+function loadState() { try { const s = localStorage.getItem('hh2'); if(s) S = JSON.parse(s); } catch(e){} }
+function saveState() { localStorage.setItem('hh2', JSON.stringify(S)); }
+let _st; function debounceSave() { clearTimeout(_st); _st = setTimeout(saveState, 400); }
+
+/* ════════════════════════════════════════
+   AUDIO
+════════════════════════════════════════ */
+let _ac;
+function ac() { if(!_ac) _ac = new (window.AudioContext||window.webkitAudioContext)(); return _ac; }
+function playTone(type) {
+  if (!S.settings.sounds) return;
+  try {
+    const ctx = ac(), now = ctx.currentTime;
+    const osc = ctx.createOscillator(), g = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    if (type==='check') {
+      osc.type='sine'; osc.frequency.setValueAtTime(660,now); osc.frequency.exponentialRampToValueAtTime(880,now+0.1);
+      g.gain.setValueAtTime(0.25,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.4);
+      osc.start(now); osc.stop(now+0.4);
+    } else if (type==='uncheck') {
+      osc.type='sine'; osc.frequency.setValueAtTime(440,now); osc.frequency.exponentialRampToValueAtTime(300,now+0.15);
+      g.gain.setValueAtTime(0.18,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.25);
+      osc.start(now); osc.stop(now+0.25);
+    } else if (type==='fanfare') {
+      [[523,0],[659,0.12],[784,0.24],[1046,0.38]].forEach(([f,t]) => {
+        const o=ctx.createOscillator(),gg=ctx.createGain();
+        o.connect(gg); gg.connect(ctx.destination); const ts=now+t;
+        o.type='sine'; o.frequency.setValueAtTime(f,ts);
+        gg.gain.setValueAtTime(0.22,ts); gg.gain.exponentialRampToValueAtTime(0.001,ts+0.28);
+        o.start(ts); o.stop(ts+0.28);
+      });
+    } else if (type==='cash') {
+      [440,600].forEach((f,i)=>{
+        const o=ctx.createOscillator(),gg=ctx.createGain();
+        o.connect(gg); gg.connect(ctx.destination); const t=now+i*0.07;
+        o.type='triangle'; o.frequency.setValueAtTime(f,t);
+        gg.gain.setValueAtTime(0.2,t); gg.gain.exponentialRampToValueAtTime(0.001,t+0.2);
+        o.start(t); o.stop(t+0.2);
+      });
+    } else if (type==='warn') {
+      osc.type='sawtooth'; osc.frequency.setValueAtTime(350,now); osc.frequency.exponentialRampToValueAtTime(180,now+0.5);
+      g.gain.setValueAtTime(0.22,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.5);
+      osc.start(now); osc.stop(now+0.5);
+    } else if (type==='fav') {
+      osc.type='sine'; osc.frequency.setValueAtTime(880,now); osc.frequency.setValueAtTime(1100,now+0.08);
+      g.gain.setValueAtTime(0.18,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.25);
+      osc.start(now); osc.stop(now+0.25);
+    } else if (type==='click') {
+      osc.type='square'; osc.frequency.setValueAtTime(1400,now);
+      g.gain.setValueAtTime(0.08,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.06);
+      osc.start(now); osc.stop(now+0.06);
+    }
+  } catch(e){}
+}
+
+/* ════════════════════════════════════════
+   PARTICLES (creative check animation)
+════════════════════════════════════════ */
+function spawnParticles(checkEl, color) {
+  // Remove old
+  checkEl.querySelectorAll('.particle-wrap').forEach(p=>p.remove());
+  const wrap = document.createElement('div');
+  wrap.className = 'particle-wrap';
+  const count = 10;
+  for (let i=0; i<count; i++) {
+    const pt = document.createElement('div');
+    pt.className = 'pt';
+    const angle = (i / count) * Math.PI * 2;
+    const r = 18 + Math.random()*12;
+    const dx = Math.cos(angle) * r;
+    const dy = Math.sin(angle) * r;
+    pt.style.cssText = `--dx:${dx}px;--dy:${dy}px;background:${color};width:${4+Math.random()*4}px;height:${4+Math.random()*4}px;animation:ptFly 0.55s ${i*0.025}s cubic-bezier(0.25,0.46,0.45,0.94) forwards;`;
+    wrap.appendChild(pt);
+  }
+  checkEl.appendChild(wrap);
+  setTimeout(()=>wrap.remove(), 900);
+}
+
+/* ════════════════════════════════════════
+   TOAST
+════════════════════════════════════════ */
+let _toastT;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastT);
+  _toastT = setTimeout(()=>el.classList.remove('show'), 2400);
+}
+
+/* ════════════════════════════════════════
+   ONBOARDING
+════════════════════════════════════════ */
+const _obHabits = [];
+function cycleEmojiOb() {
+  obEmojiIdx = (obEmojiIdx+1)%EMOJIS.length;
+  document.getElementById('ob-emoji-btn').textContent = EMOJIS[obEmojiIdx];
+}
+function cycleEmojiSet() {
+  setEmojiIdx = (setEmojiIdx+1)%EMOJIS.length;
+  document.getElementById('set-emoji-btn').textContent = EMOJIS[setEmojiIdx];
+}
+function addObHabit() {
+  const inp = document.getElementById('ob-habit-inp');
+  const name = inp.value.trim();
+  if (!name) return;
+  _obHabits.push({ id: Date.now()+'', name, emoji: EMOJIS[obEmojiIdx], color: HABIT_COLORS[_obHabits.length % HABIT_COLORS.length] });
+  inp.value = '';
+  renderObList();
+  playTone('click');
+}
+function renderObList() {
+  document.getElementById('ob-list').innerHTML = _obHabits.map((h,i) =>
+    `<span class="ob-chip">${h.emoji} ${h.name}<span class="ob-chip-del" onclick="_obHabits.splice(${i},1);renderObList()"> ✕</span></span>`
+  ).join('');
+}
+function finishOnboarding() {
+  if (!_obHabits.length) { toast('Dodaj przynajmniej 1 nawyk! 💪'); return; }
+  S.habits = _obHabits.map(h=>({...h}));
+  saveState();
+  document.getElementById('onboarding').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initApp();
+  playTone('fanfare');
+}
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+function initApp() {
+  currentDateStr = todayStr();
+  renderToday();
+  buildCatGrid();
+  renderExpFilters();
+  renderExpenses();
+  buildRecipeCatPills();
+  buildRecipeSortPills();
+  renderRecipes();
+  document.getElementById('budget-inp').value = S.settings.budget || '';
+  document.getElementById('sounds-sw').checked = S.settings.sounds !== false;
+}
+
+/* ════════════════════════════════════════
+   SCREENS
+════════════════════════════════════════ */
+function showScreen(name, btn) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(name==='stats')    renderStats();
+  if(name==='history')  renderHistory();
+  if(name==='expenses') renderExpenses();
+  if(name==='settings') renderSettingsHabits();
+}
+
+/* ════════════════════════════════════════
+   TODAY
+════════════════════════════════════════ */
+function renderToday() {
+  const today = todayStr();
+  const isToday = currentDateStr === today;
+  const tomorrowD = new Date(); tomorrowD.setDate(tomorrowD.getDate()+1);
+  const tomorrowStr = tomorrowD.toISOString().split('T')[0];
+  const isTomorrow = currentDateStr === tomorrowStr;
+
+  document.getElementById('today-title').textContent = isToday ? 'Dzisiaj' : (isTomorrow ? 'Jutro' : 'Historia');
+  document.getElementById('today-date-lbl').textContent = formatDateLabel(currentDateStr);
+
+  // Nav arrows — allow going to tomorrow (next day only)
+  document.getElementById('btn-prev').classList.toggle('disabled', false);
+  document.getElementById('btn-next').classList.toggle('disabled', !isAllowedFuture(nextDayStr(currentDateStr)));
+
+  const day = S.days[currentDateStr] || {};
+
+  // Priorities
+  const ta = document.getElementById('priorities-ta');
+  ta.value = day.priorities || '';
+  ta.oninput = () => {
+    if(!S.days[currentDateStr]) S.days[currentDateStr] = {};
+    S.days[currentDateStr].priorities = ta.value;
+    debounceSave();
+  };
+
+  // Habits card
+  const card = document.getElementById('habits-card');
+  if (!S.habits.length) {
+    card.innerHTML = '<div class="empty"><div class="empty-icon">🎯</div><div class="empty-text">Brak nawyków – dodaj je w Ustawieniach</div></div>';
+    return;
+  }
+
+  card.innerHTML = '<div class="card-label">Nawyki</div>' + S.habits.map(h => {
+    const hd = (day.habits && day.habits[h.id]) || {};
+    const done = hd.done || false;
+    const note = hd.note || '';
+    const streak = calcStreak(h.id);
+    return `
+    <div class="habit-item" id="hitem-${h.id}">
+      <div class="habit-row">
+        <div class="hcheck ${done?'done':''}" id="hcheck-${h.id}" onclick="toggleHabit('${h.id}',event)">
+          <div class="hcheck-ring" id="hring-${h.id}"></div>
+          <div class="hcheck-inner" id="hinner-${h.id}" style="${done?`background:${h.color};box-shadow:0 0 14px ${h.color}88;color:white;font-size:1rem;`:''}">
+            ${done ? '✓' : h.emoji}
+          </div>
+        </div>
+        <span class="habit-name ${done?'done':''}">${h.name}</span>
+        ${streak >= 2 ? `<span class="streak-pill">🔥 ${streak}</span>` : ''}
+        <button class="habit-note-btn ${note?'has-note':''}" onclick="toggleNote('${h.id}')">${note?'📝':'＋'} nota</button>
+      </div>
+      <div class="habit-note-wrap ${note?'open':''}" id="hnwrap-${h.id}">
+        <textarea class="habit-note-ta" id="hnta-${h.id}" placeholder="Twoja notatka do tego nawyku…" oninput="saveNote('${h.id}',this.value)">${note}</textarea>
+      </div>
+    </div>`;
+  }).join('');
+
+  updateProgress();
+}
+
+function nextDayStr(s) {
+  const d = dateFromStr(s); d.setDate(d.getDate()+1); return d.toISOString().split('T')[0];
+}
+function prevDayStr(s) {
+  const d = dateFromStr(s); d.setDate(d.getDate()-1); return d.toISOString().split('T')[0];
+}
+
+function changeDay(delta) {
+  const next = delta > 0 ? nextDayStr(currentDateStr) : prevDayStr(currentDateStr);
+  if (delta > 0 && !isAllowedFuture(next)) { toast('Maksymalnie jutro ⏰'); return; }
+  currentDateStr = next;
+  renderToday();
+}
+
+function toggleHabit(id, event) {
+  if (!S.days[currentDateStr]) S.days[currentDateStr] = {};
+  if (!S.days[currentDateStr].habits) S.days[currentDateStr].habits = {};
+  const cur = S.days[currentDateStr].habits[id]?.done || false;
+  const newVal = !cur;
+  S.days[currentDateStr].habits[id] = { ...S.days[currentDateStr].habits[id], done: newVal };
+  saveState();
+
+  const h = S.habits.find(x=>x.id===id);
+  const color = h?.color || '#6366f1';
+  const checkEl = document.getElementById('hcheck-'+id);
+  const inner = document.getElementById('hinner-'+id);
+
+  if (newVal) {
+    checkEl.classList.add('done');
+    inner.style.cssText = `background:${color};box-shadow:0 0 20px ${color}99;color:white;font-size:1.1rem;`;
+    inner.textContent = '✓';
+    spawnParticles(checkEl, color);
+    playTone('check');
+    document.querySelector(`[id="hitem-${id}"] .habit-name`)?.classList.add('done');
+  } else {
+    checkEl.classList.remove('done');
+    inner.style.cssText = '';
+    inner.textContent = h?.emoji || '·';
+    playTone('uncheck');
+    document.querySelector(`[id="hitem-${id}"] .habit-name`)?.classList.remove('done');
+  }
+
+  updateProgress();
+
+  // Check all done
+  const total = S.habits.length;
+  const done = S.habits.filter(h => S.days[currentDateStr]?.habits?.[h.id]?.done).length;
+  if (newVal && done === total) {
+    setTimeout(()=>{ playTone('fanfare'); toast('🏆 Wszystkie nawyki ukończone!'); }, 350);
+  }
+}
+
+function toggleNote(id) {
+  const wrap = document.getElementById('hnwrap-'+id);
+  wrap.classList.toggle('open');
+  if (wrap.classList.contains('open')) document.getElementById('hnta-'+id)?.focus();
+}
+function saveNote(id, val) {
+  if(!S.days[currentDateStr]) S.days[currentDateStr] = {};
+  if(!S.days[currentDateStr].habits) S.days[currentDateStr].habits = {};
+  if(!S.days[currentDateStr].habits[id]) S.days[currentDateStr].habits[id] = {};
+  S.days[currentDateStr].habits[id].note = val;
+  debounceSave();
+}
+function updateProgress() {
+  const total = S.habits.length;
+  const done = S.habits.filter(h => S.days[currentDateStr]?.habits?.[h.id]?.done).length;
+  const pct = total ? done/total : 0;
+  document.getElementById('prog-fill').style.width = (pct*100)+'%';
+  document.getElementById('prog-count').textContent = `${done}/${total}`;
+  const statuses = ['Czas zacząć 💪','Dobry start 🔥','Idzie świetnie ⚡','Prawie tam 🚀','Komplet! 🏆'];
+  document.getElementById('prog-status').textContent = statuses[Math.min(Math.floor(pct*4.99), 4)];
+}
+
+/* ── Streak logic: count consecutive days with habit done, ending yesterday ── */
+function calcStreak(habitId) {
+  let streak = 0;
+  const today = todayStr();
+  for (let i=1; i<=365; i++) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const ds = d.toISOString().split('T')[0];
+    const done = S.days[ds]?.habits?.[habitId]?.done;
+    if (done) streak++;
+    else break; // streak broken
+  }
+  // Also count today if done
+  if (S.days[today]?.habits?.[habitId]?.done) streak++;
+  return streak;
+}
+
+/* ════════════════════════════════════════
+   HISTORY
+════════════════════════════════════════ */
+function renderHistory() {
+  const body = document.getElementById('history-body');
+  let html = '';
+  for (let i=0; i<30; i++) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const ds = d.toISOString().split('T')[0];
+    const day = S.days[ds] || {};
+    const total = S.habits.length;
+    const done = S.habits.filter(h => day.habits?.[h.id]?.done).length;
+    const pct = total ? Math.round(done/total*100) : 0;
+    const cls = pct===100 ? 'gold' : pct>=50 ? 'good' : 'meh';
+    const label = pct===100 ? '🏆 100%' : `${pct}%`;
+    html += `<div class="hist-card" style="animation-delay:${i*0.03}s">
+      <div class="hist-header">
+        <span class="hist-date">${formatDateLabel(ds)}</span>
+        <span class="hist-pct ${cls}">${done}/${total} — ${label}</span>
+      </div>
+      ${day.priorities ? `<div class="hist-priorities">"${day.priorities.substring(0,100)}${day.priorities.length>100?'…':''}"</div>` : ''}
+      <div class="hist-chips">${S.habits.map(h=>{
+        const d2=day.habits?.[h.id]?.done, note=day.habits?.[h.id]?.note;
+        return `<span class="hist-chip ${d2?'done':'miss'}">${h.emoji} ${h.name}${note?' 📝':''}</span>`;
+      }).join('')}</div>
+    </div>`;
+  }
+  body.innerHTML = html || '<div class="empty"><div class="empty-icon">◷</div><div class="empty-text">Brak historii</div></div>';
+}
+
+/* ════════════════════════════════════════
+   STATS
+════════════════════════════════════════ */
+function renderStats() {
+  const today = todayStr();
+  const total = S.habits.length;
+  const allDs = Object.keys(S.days);
+  const activeDays = allDs.filter(ds => S.habits.some(h => S.days[ds]?.habits?.[h.id]?.done)).length;
+  const perfectDays = allDs.filter(ds => total && S.habits.every(h => S.days[ds]?.habits?.[h.id]?.done)).length;
+
+  // Best streak across all habits
+  let globalBest = 0;
+  S.habits.forEach(h => {
+    let s=0, best=0;
+    for(let i=0;i<365;i++){
+      const d=new Date(); d.setDate(d.getDate()-i);
+      const ds=d.toISOString().split('T')[0];
+      if(S.days[ds]?.habits?.[h.id]?.done){ s++; best=Math.max(best,s); } else s=0;
+    }
+    globalBest = Math.max(globalBest, best);
+  });
+
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-box"><div class="stat-num" style="color:var(--accent2)">${total}</div><div class="stat-lbl">Nawyki</div></div>
+    <div class="stat-box"><div class="stat-num" style="color:var(--green)">${activeDays}</div><div class="stat-lbl">Aktywne dni</div></div>
+    <div class="stat-box"><div class="stat-num" style="color:var(--amber)">🏆 ${perfectDays}</div><div class="stat-lbl">Idealne dni</div></div>
+    <div class="stat-box"><div class="stat-num" style="color:var(--rose)">🔥 ${globalBest}</div><div class="stat-lbl">Najl. passa</div></div>`;
+
+  drawBarChart('chart7', 7);
+  drawBarChart('chart30', 30);
+
+  // Per-habit
+  const el = document.getElementById('habit-detail-stats');
+  el.innerHTML = '<div class="card-label">Nawyki – szczegóły</div>' + S.habits.map(h => {
+    let streak=0, maxS=0, tmpS=0, cnt=0;
+    for(let i=0;i<30;i++){
+      const d=new Date(); d.setDate(d.getDate()-i);
+      const ds=d.toISOString().split('T')[0];
+      const done=S.days[ds]?.habits?.[h.id]?.done;
+      if(done){cnt++;if(i<=streak)streak++;tmpS++;maxS=Math.max(maxS,tmpS);}else tmpS=0;
+    }
+    const pct=Math.round(cnt/30*100);
+    return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:1.3rem">${h.emoji}</span>
+      <div style="flex:1">
+        <div style="font-size:0.9rem;font-weight:700;color:var(--text)">${h.name}</div>
+        <div style="font-size:0.75rem;color:var(--text3);font-weight:600;margin-top:2px">🔥 Passa: ${streak} dni | Rekord: ${maxS}</div>
+      </div>
+      <span style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:${h.color}">${pct}%</span>
+    </div>`;
+  }).join('') + (S.habits.length===0 ? '<div class="empty"><div class="empty-text">Brak nawyków</div></div>' : '');
+}
+
+function drawBarChart(id, days) {
+  const c = document.getElementById(id);
+  const W = c.offsetWidth || 360;
+  const H = days===7 ? 110 : 70;
+  c.width=W; c.height=H;
+  const ctx = c.getContext('2d');
+  const data=[];
+  for(let i=days-1;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const ds=d.toISOString().split('T')[0];
+    const tot=S.habits.length;
+    const done=tot?S.habits.filter(h=>S.days[ds]?.habits?.[h.id]?.done).length:0;
+    data.push({pct:tot?done/tot:0,lbl:d.getDate()});
+  }
+  const bW = (W-20)/data.length - 3;
+  ctx.clearRect(0,0,W,H);
+  data.forEach((item,i)=>{
+    const x=10+i*((W-20)/data.length);
+    const bH=Math.max(3, item.pct*(H-22));
+    const y=H-bH-18;
+    const g=ctx.createLinearGradient(0,y,0,H-18);
+    g.addColorStop(0,'#6366f1'); g.addColorStop(1,'#a78bfa');
+    ctx.fillStyle=g;
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(x,y,bW,bH,3);
+    else ctx.rect(x,y,bW,bH);
+    ctx.fill();
+    ctx.fillStyle='#5a5a7a';
+    ctx.font=`600 9px 'Plus Jakarta Sans', sans-serif`;
+    ctx.textAlign='center';
+    ctx.fillText(item.lbl, x+bW/2, H-4);
+  });
+}
+
+/* ════════════════════════════════════════
+   EXPENSES
+════════════════════════════════════════ */
+function buildCatGrid() {
+  const grid = document.getElementById('cat-grid');
+  grid.innerHTML = CATEGORIES.map(c =>
+    `<div class="cat-tile ${c.id===selectedCatId?'active':''}" onclick="selectCat('${c.id}')">
+      <div class="cat-tile-icon">${c.emoji}</div>
+      <div class="cat-tile-name">${c.name}</div>
+    </div>`
+  ).join('');
+}
+function selectCat(id) {
+  selectedCatId = id;
+  buildCatGrid();
+  playTone('click');
+}
+function renderExpFilters() {
+  const el = document.getElementById('exp-filter-pills');
+  const all = [{id:'all',name:'Wszystkie',emoji:'◎'},...CATEGORIES];
+  el.innerHTML = all.map(c =>
+    `<button class="filter-pill ${expFilter===c.id?'active':''}" onclick="setExpFilter('${c.id}')">${c.emoji} ${c.name}</button>`
+  ).join('');
+}
+function setExpFilter(id) {
+  expFilter=id;
+  renderExpFilters();
+  renderExpenses();
+}
+function addExpense() {
+  const amount = parseFloat(document.getElementById('exp-amount').value);
+  const name = document.getElementById('exp-name').value.trim();
+  const date = document.getElementById('exp-date').value;
+  if (!amount || amount<=0) { toast('Podaj kwotę 💸'); return; }
+  if (!name) { toast('Podaj opis'); return; }
+  S.expenses.push({ id: Date.now()+'', amount, name, cat: selectedCatId, date });
+  saveState();
+  document.getElementById('exp-amount').value='';
+  document.getElementById('exp-name').value='';
+  playTone('cash');
+  toast('Dodano wydatek ✓');
+  renderExpenses();
+  checkBudgetAlert();
+}
+function checkBudgetAlert() {
+  if (!S.settings.budget) return;
+  const ms = monthStr(); const total = S.expenses.filter(e=>e.date.startsWith(ms)).reduce((s,e)=>s+e.amount,0);
+  if (total/S.settings.budget >= 1) playTone('warn');
+}
+function deleteExpense(id) {
+  S.expenses = S.expenses.filter(e=>e.id!==id);
+  saveState(); renderExpenses(); toast('Usunięto');
+}
+function monthStr() { const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; }
+function renderExpenses() {
+  const ms = monthStr();
+  const monthExp = S.expenses.filter(e=>e.date.startsWith(ms));
+  const totalMonth = monthExp.reduce((s,e)=>s+e.amount,0);
+  const budget = S.settings.budget||0;
+  const pct = budget ? Math.min(totalMonth/budget,1) : 0;
+  const bar = document.getElementById('budget-bar');
+  bar.style.width=(pct*100)+'%';
+  bar.className='budget-fill'+(pct>=1?' over':pct>=0.8?' warn':'');
+  document.getElementById('budget-spent-lbl').textContent = totalMonth.toFixed(2)+' zł';
+  document.getElementById('budget-limit-lbl').textContent = budget ? `z ${budget} zł` : '(brak limitu)';
+  document.getElementById('budget-meta-lbl').textContent = budget ? `Pozostało: ${Math.max(0,budget-totalMonth).toFixed(2)} zł` : '';
+
+  drawPie(monthExp);
+
+  const filtered = (expFilter==='all' ? S.expenses : S.expenses.filter(e=>e.cat===expFilter))
+    .slice().sort((a,b)=>b.date.localeCompare(a.date));
+
+  const list = document.getElementById('exp-list');
+  if (!filtered.length) { list.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-text">Brak wydatków</div></div>'; return; }
+
+  const grouped={};
+  filtered.forEach(e=>{if(!grouped[e.date])grouped[e.date]=[];grouped[e.date].push(e);});
+  list.innerHTML = Object.keys(grouped).sort((a,b)=>b.localeCompare(a)).map(date=>{
+    const dt=grouped[date].reduce((s,e)=>s+e.amount,0);
+    return `<div class="exp-day-sep"><span>${formatDateLabel(date)}</span><span>${dt.toFixed(2)} zł</span></div>` +
+      grouped[date].map(e=>{
+        const cat=CATEGORIES.find(c=>c.id===e.cat)||{emoji:'📦',name:'Inne'};
+        return `<div class="exp-item">
+          <div class="exp-icon">${cat.emoji}</div>
+          <div class="exp-info"><div class="exp-name">${e.name}</div><div class="exp-cat-lbl">${cat.name}</div></div>
+          <div class="exp-amount">${e.amount.toFixed(2)} zł</div>
+          <button class="exp-del" onclick="deleteExpense('${e.id}')">🗑</button>
+        </div>`;
+      }).join('');
+  }).join('');
+}
+function drawPie(expenses) {
+  const c=document.getElementById('pie-chart');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,120,120);
+  const totals={};
+  expenses.forEach(e=>{ totals[e.cat]=(totals[e.cat]||0)+e.amount; });
+  const total=Object.values(totals).reduce((a,b)=>a+b,0);
+  if(!total){ctx.fillStyle='#1e1e35';ctx.beginPath();ctx.arc(60,60,55,0,Math.PI*2);ctx.fill();document.getElementById('pie-legend').innerHTML='';return;}
+  let angle=-Math.PI/2;
+  const legend=[];
+  Object.entries(totals).forEach(([catId,val],i)=>{
+    const slice=(val/total)*Math.PI*2;
+    const cat=CATEGORIES.find(c=>c.id===catId);
+    const color=CAT_COLORS[i%CAT_COLORS.length];
+    ctx.beginPath(); ctx.moveTo(60,60);
+    ctx.arc(60,60,55,angle,angle+slice);
+    ctx.closePath(); ctx.fillStyle=color; ctx.fill();
+    ctx.strokeStyle='#0f0f19'; ctx.lineWidth=2; ctx.stroke();
+    angle+=slice;
+    legend.push({color,name:cat?.name||catId,val});
+  });
+  document.getElementById('pie-legend').innerHTML=legend.map(l=>
+    `<div class="pie-leg"><div class="pie-dot" style="background:${l.color}"></div><span class="pie-leg-name">${l.name}</span><span class="pie-leg-val">${l.val.toFixed(0)} zł</span></div>`
+  ).join('');
+}
+
+/* ════════════════════════════════════════
+   RECIPES
+════════════════════════════════════════ */
+const rcats=[
+  {id:'all',l:'Wszystkie'},{id:'highprot',l:'💪 Białkowe'},{id:'mealprep',l:'📦 Meal prep'},
+  {id:'veg',l:'🥦 Wegetariańskie'},{id:'quick',l:'⚡ Szybkie'},{id:'snack',l:'🍰 Przekąski'},{id:'fav',l:'❤️ Ulubione'},
+];
+const rsorts=[
+  {id:'default',l:'Domyślne'},{id:'time',l:'⏱ Najszybsze'},{id:'protein',l:'💪 Białko'},{id:'kcal',l:'🔥 Kcal ↓'},
+];
+function buildRecipeCatPills(){
+  document.getElementById('recipe-cat-pills').innerHTML=rcats.map(c=>
+    `<button class="filter-pill ${recipeCatFilter===c.id?'active':''}" onclick="setRecipeCat('${c.id}')">${c.l}</button>`
+  ).join('');
+}
+function buildRecipeSortPills(){
+  document.getElementById('recipe-sort-pills').innerHTML=rsorts.map(s=>
+    `<button class="filter-pill ${recipeSort===s.id?'active':''}" onclick="setRecipeSort('${s.id}')">${s.l}</button>`
+  ).join('');
+}
+function setRecipeCat(id){recipeCatFilter=id;buildRecipeCatPills();renderRecipes();}
+function setRecipeSort(id){recipeSort=id;buildRecipeSortPills();renderRecipes();}
+function toggleFav(id,e){
+  e.stopPropagation();
+  const idx=S.favorites.indexOf(id);
+  if(idx>=0){S.favorites.splice(idx,1);toast('Usunięto z ulubionych');}
+  else{S.favorites.push(id);playTone('fav');toast('Dodano do ulubionych ❤️');}
+  saveState(); renderRecipes();
+}
+function toggleRecipeDetail(id){
+  const el=document.getElementById('rd-'+id);
+  const btn=document.getElementById('rdb-'+id);
+  if(el.classList.contains('open')){el.classList.remove('open');btn.textContent='▾ Pokaż przepis';}
+  else{el.classList.add('open');btn.textContent='▴ Ukryj przepis';}
+}
+const catLabels={highprot:'💪 Wysokobiałkowe',mealprep:'📦 Meal prep',veg:'🥦 Wegetariańskie',quick:'⚡ Szybkie',snack:'🍰 Przekąski'};
+function renderRecipes(){
+  const q=(document.getElementById('recipe-search')?.value||'').toLowerCase();
+  let rs=[...RECIPES];
+  if(recipeCatFilter==='fav') rs=rs.filter(r=>S.favorites.includes(r.id));
+  else if(recipeCatFilter!=='all') rs=rs.filter(r=>r.cat===recipeCatFilter);
+  if(q) rs=rs.filter(r=>r.name.toLowerCase().includes(q)||r.desc.toLowerCase().includes(q));
+  if(recipeSort==='time') rs.sort((a,b)=>a.time-b.time);
+  else if(recipeSort==='protein') rs.sort((a,b)=>b.prot-a.prot);
+  else if(recipeSort==='kcal') rs.sort((a,b)=>a.kcal-b.kcal);
+  document.getElementById('recipe-list').innerHTML = rs.map((r,i)=>`
+    <div class="recipe-card" style="animation-delay:${i*0.04}s">
+      <div class="recipe-header">
+        <div class="recipe-emoji-wrap">${r.emoji}</div>
+        <div class="recipe-info">
+          <div class="recipe-name">${r.name}</div>
+          <div class="recipe-cat-lbl">${catLabels[r.cat]||r.cat}</div>
+        </div>
+        <button class="recipe-fav-btn" onclick="toggleFav(${r.id},event)">${S.favorites.includes(r.id)?'❤️':'♡'}</button>
+      </div>
+      <div class="recipe-meta">
+        <span class="time-badge">⏱ ${r.time} min</span>
+        <div class="macro-row">
+          <span class="macro-badge p">B ${r.prot}g</span>
+          <span class="macro-badge c">W ${r.carb}g</span>
+          <span class="macro-badge f">T ${r.fat}g</span>
+          <span class="macro-badge k">${r.kcal} kcal</span>
+        </div>
+      </div>
+      <div class="recipe-desc">${r.desc}</div>
+      <button class="toggle-recipe-btn" id="rdb-${r.id}" onclick="toggleRecipeDetail(${r.id})">▾ Pokaż przepis</button>
+      <div class="recipe-detail" id="rd-${r.id}">
+        <h4>Składniki</h4>
+        <ul>${r.ingredients.map(x=>`<li>${x}</li>`).join('')}</ul>
+        <h4>Przygotowanie</h4>
+        <ol>${r.steps.map(x=>`<li>${x}</li>`).join('')}</ol>
+      </div>
+    </div>`).join('') || '<div class="empty"><div class="empty-icon">🍽️</div><div class="empty-text">Brak przepisów</div></div>';
+}
+
+/* ════════════════════════════════════════
+   SETTINGS
+════════════════════════════════════════ */
+function renderSettingsHabits() {
+  document.getElementById('settings-habits-list').innerHTML = S.habits.map((h,i)=>`
+    <div class="habit-manage-item">
+      <span class="habit-manage-emoji">${h.emoji}</span>
+      <span class="habit-manage-name">${h.name}</span>
+      <button class="del-btn" onclick="delHabit(${i})">Usuń</button>
+    </div>`).join('') || '<div style="color:var(--text3);font-size:0.85rem;font-weight:600;padding:8px 0;">Brak nawyków</div>';
+}
+function addHabitSettings() {
+  const inp=document.getElementById('set-habit-inp');
+  const name=inp.value.trim();
+  if(!name) return;
+  S.habits.push({id:Date.now()+'',name,emoji:EMOJIS[setEmojiIdx],color:HABIT_COLORS[S.habits.length%HABIT_COLORS.length]});
+  inp.value='';
+  saveState(); renderSettingsHabits(); renderToday(); playTone('click'); toast('Nawyk dodany 🎯');
+}
+function delHabit(idx) {
+  if(!confirm('Usunąć nawyk?')) return;
+  S.habits.splice(idx,1);
+  saveState(); renderSettingsHabits(); renderToday();
+}
+function saveBudget() {
+  S.settings.budget = parseFloat(document.getElementById('budget-inp').value)||0;
+  saveState(); toast('Budżet zapisany 💰'); renderExpenses();
+}
+function saveSettings() {
+  S.settings.sounds = document.getElementById('sounds-sw').checked;
+  saveState();
+}
+function exportData() {
+  const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b);
+  a.download='habithub-backup.json'; a.click();
+}
+function resetAll() {
+  if(!confirm('Usunąć WSZYSTKIE dane? Tej operacji nie można cofnąć.')) return;
+  localStorage.removeItem('hh2'); location.reload();
+}
+
+/* ════════════════════════════════════════
+   BOOT
+════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', ()=>{
+  loadState();
+  if(S.habits.length>0){
+    document.getElementById('onboarding').style.display='none';
+    document.getElementById('app').style.display='block';
+    initApp();
+  }
+  // Register service worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+  // Set expense date default
+  document.getElementById('exp-date').value = todayStr();
+});
+</script>
+</body>
+</html>
